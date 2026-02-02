@@ -31,7 +31,8 @@ public class PostHandler implements HttpHandler {
             handleGet(exchange);
         } else if ("POST".equals(method)) {
             handlePost(exchange);
-            System.out.println();
+        } else if ("DELETE".equals(method)) {
+            handleDelete(exchange);
         } else {
             exchange.sendResponseHeaders(405, -1);
             exchange.close();
@@ -90,7 +91,39 @@ public class PostHandler implements HttpHandler {
 
     }
 
+    private void handleDelete(HttpExchange exchange) throws IOException {
+        String query = exchange.getRequestURI().getQuery();
+        Map<String, String> params = parseQuery(query);
+
+        // 1. Validation
+        if (!params.containsKey("id")) {
+            sendResponse(exchange, 400, "{\"error\": \"Missing ID\"}");
+            return;
+        }
+
+        int idParam;
+        try {
+            idParam = Integer.parseInt(params.get("id"));
+        } catch (NumberFormatException e) {
+            sendResponse(exchange, 400, "{\"error\": \"Invalid ID format\"}");
+            return;
+        }
+        // 2. Deletion
+        boolean removed = posts.removeIf(post -> post.getId() == idParam);
+
+        if (removed) {
+            sendResponse(exchange, 204, null);
+        } else {
+            sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");
+        }
+    }
+
     private void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
+        if (statusCode == 204) {
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+        
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(statusCode, bytes.length);

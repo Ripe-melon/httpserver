@@ -22,5 +22,13 @@ public class App {
         } catch (ResourceNotFoundException e) {
             System.err.println("Error: " + e.getMessage());
         }
+
+        System.out.println("\n--- 3. Deleting the Post---");
+        try {
+            boolean successTwo = client.deletePost(1);
+            System.out.println("Deletion Succes:" + successTwo);
+        } catch (ResourceNotFoundException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 }

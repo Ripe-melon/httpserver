@@ -46,6 +46,20 @@ public class BlogClient {
         }
     }
 
+    public boolean deletePost(int id) {
+        String endpoint = String.format("%s/api/posts?id=%d", baseUrl, id);
+
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint))
+                .header("Content-Type", "application/json")
+                .DELETE().build();
+        try {
+            HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+            return ensureSuccess(response);
+        } catch (IOException | InterruptedException e) {
+            throw new BlogApiException("Network failed: " + e.getMessage(), 0);
+        }
+    }
+
     private boolean ensureSuccess(HttpResponse<String> response) {
         int status = response.statusCode();
         if (status >= 200 && status < 300) {
