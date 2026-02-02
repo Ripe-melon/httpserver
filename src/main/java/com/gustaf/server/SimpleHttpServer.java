@@ -1,6 +1,6 @@
-package com.gustaf;
+package com.gustaf.server;
 
-import com.gustaf.handlers.PostHandler;
+import com.gustaf.server.handlers.PostHandler;
 import com.sun.net.httpserver.*;
 import java.io.IOException;
 import java.net.InetSocketAddress;

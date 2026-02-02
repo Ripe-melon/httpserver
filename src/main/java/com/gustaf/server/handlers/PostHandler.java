@@ -1,4 +1,4 @@
-package com.gustaf.handlers;
+package com.gustaf.server.handlers;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.app.Post;
 import com.google.gson.Gson;
+import com.gustaf.shared.models.Post;
 import com.sun.net.httpserver.*;
 
 public class PostHandler implements HttpHandler {

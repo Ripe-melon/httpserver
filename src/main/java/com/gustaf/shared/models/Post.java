@@ -1,4 +1,4 @@
-package com.app;
+package com.gustaf.shared.models;
 
 public class Post {
     int userId;
