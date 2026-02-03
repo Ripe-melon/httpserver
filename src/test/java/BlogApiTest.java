@@ -36,6 +36,7 @@ class BlogApiTest {
     void testCreatePost() {
         // Arrange (Prepare data)
         Post post = new Post(0, "JUnit Test", "This is an auto-test");
+        Post post2 = new Post(0, "JUnit Test2", "This is an auto-test");
 
         // Act (Do the action)
         boolean result = client.createPost(post);
@@ -57,7 +58,37 @@ class BlogApiTest {
     }
 
     @Test
-    @Order(3)
+    @Order(3) 
+    void testUpdatePost() {
+        System.out.println("Test 3: Update (PUT)");
+
+        // 1. Arrange: Prepare the "New Box" with updated content
+        // Note: The ID here doesn't matter much if your server forces the ID from the
+        // URL,
+        // but it's good practice to keep it consistent.
+        Post updatedData = new Post(1, "Updated Title", "This content was changed via PUT!");
+
+        // 2. Act: Send the PUT request targeting ID 1
+        // (Assuming your method is named 'updatePost')
+        boolean success = client.updatePost(1, updatedData);
+
+        // 3. Assert: Verify the method returned true
+        assertTrue(success, "Update should return true");
+
+        // 4. Verification: Fetch the post again to prove the Server's memory actually
+        // changed
+        Post fetchedPost = client.getPost(1);
+
+        // Check that the title is now "Updated Title" and NOT the old title
+        assertEquals("Updated Title", fetchedPost.getTitle(), "Title should have been updated");
+        assertEquals("This content was changed via PUT!", fetchedPost.getBody(), "Body should have been updated");
+
+        // Optional: Ensure the ID didn't accidentally change
+        assertEquals(1, fetchedPost.getId(), "ID should remain 1");
+    }
+
+    @Test
+    @Order(4)
     void testDeletePost() {
         // Act
         boolean deleted = client.deletePost(1);
@@ -73,7 +104,7 @@ class BlogApiTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     void testUniqueIds() {
         // Arrange: Create two different post objects
         Post post1 = new Post(0, "First", "Body");

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ public class PostHandler implements HttpHandler {
             handlePost(exchange);
         } else if ("DELETE".equals(method)) {
             handleDelete(exchange);
+        } else if ("PUT".equals(method)) {
+            handlePut(exchange);
         } else {
             exchange.sendResponseHeaders(405, -1);
             exchange.close();
@@ -113,6 +116,45 @@ public class PostHandler implements HttpHandler {
 
         if (removed) {
             sendResponse(exchange, 204, null);
+        } else {
+            sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");
+        }
+    }
+
+    public void handlePut(HttpExchange exchange) throws IOException {
+        String query = exchange.getRequestURI().getQuery();
+
+        Map<String, String> params = parseQuery(query);
+        if (!params.containsKey("id")) {
+            sendResponse(exchange, 400, "{\"error\": \"Missing ID\"}");
+            return;
+        }
+        int idParam;
+        try {
+            idParam = Integer.parseInt(params.get("id"));
+        } catch (NumberFormatException e) {
+            sendResponse(exchange, 400, "{\"error\": \"Invalid ID format\"}");
+            return;
+        }
+        InputStreamReader input = new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(input);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            sb.append(line);
+        }
+        Post incomingPost = gson.fromJson(sb.toString(), Post.class);
+        boolean found = false;
+        for (int i = 0; i < posts.size(); i++) {
+            if (posts.get(i).getId() == idParam) {
+                incomingPost.setId(idParam);
+                posts.set(i, incomingPost);
+                found = true;
+                break;
+            }
+        }
+        if (found) {
+            sendResponse(exchange, 200, "{\"message\": \"Post updated\", \"id\": " + incomingPost.getId() + "}");
         } else {
             sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");
         }
