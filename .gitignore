@@ -5,8 +5,7 @@
 *.log
 
 # --- Maven (Build Output) ---
-# This is crucial. It ignores the 'target' folder where Maven builds your JARs.
-# You never want to commit the build artifacts, only the source code.
+
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -14,7 +13,6 @@ pom.xml.versionsBackup
 dependency-reduced-pom.xml
 
 # --- VS Code (IDE Settings) ---
-# These are local settings for your specific machine.
 .vscode/
 .settings/
 .classpath
@@ -23,7 +21,6 @@ dependency-reduced-pom.xml
 bin/
 
 # --- Mac OS System Files ---
-# Junk files created by Finder
 .DS_Store
 
 # --- IntelliJ IDEA (Just in case you switch later) ---
