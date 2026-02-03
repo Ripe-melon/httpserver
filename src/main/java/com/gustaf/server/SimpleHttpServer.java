@@ -7,6 +7,7 @@ import java.net.InetSocketAddress;
 
 public class SimpleHttpServer {
     private PostHandler postHandler;
+    private HttpServer server;
 
     public SimpleHttpServer() {
         postHandler = new PostHandler();
@@ -18,7 +19,7 @@ public class SimpleHttpServer {
 
     public void start() throws IOException {
         // Create http server
-        HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+        this.server = HttpServer.create(new InetSocketAddress(8080), 0);
 
         // Route the traffic
         server.createContext("/api/posts", postHandler);
@@ -29,6 +30,13 @@ public class SimpleHttpServer {
         // Start the server
         server.start();
         System.out.println("Server started on port 8080");
+    }
+
+    public void stop() {
+        if (server != null) {
+            server.stop(0);
+            System.out.println("Server stopped.");
+        }
     }
 
 }

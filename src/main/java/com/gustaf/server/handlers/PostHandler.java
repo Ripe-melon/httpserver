@@ -123,7 +123,7 @@ public class PostHandler implements HttpHandler {
             exchange.sendResponseHeaders(204, -1);
             return;
         }
-        
+
         byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(statusCode, bytes.length);
