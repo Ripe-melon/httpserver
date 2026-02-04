@@ -6,6 +6,12 @@ public class Post {
     String title;
     String body;
 
+    public Post(String title, String body) {
+        this.id = 0; // 0 indicates "Not saved in DB yet"
+        this.title = title;
+        this.body = body;
+    }
+
     public Post(int userId, String title, String body) {
         this.userId = userId;
         this.title = title;
