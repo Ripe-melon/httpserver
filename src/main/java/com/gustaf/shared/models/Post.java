@@ -2,7 +2,7 @@ package com.gustaf.shared.models;
 
 public class Post {
     int userId;
-    Integer id;
+    int id;
     String title;
     String body;
 
@@ -12,8 +12,8 @@ public class Post {
         this.body = body;
     }
 
-    public Post(int userId, String title, String body) {
-        this.userId = userId;
+    public Post(int id, String title, String body) {
+        this.id = id;
         this.title = title;
         this.body = body;
     }
@@ -22,7 +22,7 @@ public class Post {
         return userId;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -36,5 +36,15 @@ public class Post {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Post [" +
+                "userId=" + userId +
+                ", id=" + id +
+                ", title='" + title + '\'' +
+                ", body='" + body + '\'' +
+                ']';
     }
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 import com.gustaf.shared.models.Post;
+import com.gustaf.shared.data.*;
 import com.sun.net.httpserver.*;
 
 public class PostHandler implements HttpHandler {
@@ -21,6 +22,7 @@ public class PostHandler implements HttpHandler {
 
     public PostHandler() {
         this.gson = new Gson();
+        
     }
 
     @Override
@@ -51,12 +53,7 @@ public class PostHandler implements HttpHandler {
             int idParam = Integer.parseInt(params.get("id"));
 
             Post foundPost = null;
-            for (Post post : posts) {
-                if (post.getId() != null && post.getId() == idParam) {
-                    foundPost = post;
-                    break;
-                }
-            }
+
             if (foundPost != null) {
                 // Success: Return just the found object
                 String json = gson.toJson(foundPost);
