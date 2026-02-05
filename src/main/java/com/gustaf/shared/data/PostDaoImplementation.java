@@ -87,14 +87,19 @@ public class PostDaoImplementation implements PostDAOInterface {
         int result = 0;
         try (Connection conn = db.getConnection()) {
 
-            String sql = "INSERT INTO posts (title, body) VALUES (?, ?)";
+            String sql = "INSERT INTO posts (title, body) VALUES (?, ?) RETURNING id";
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
                 ps.setString(1, post.getTitle());
                 ps.setString(2, post.getBody());
 
-                result = ps.executeUpdate();
+                try (ResultSet rs = ps.executeQuery()) {
+                    rs.next();
+                    result = rs.getInt("id");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 conn.close();
                 ps.close();

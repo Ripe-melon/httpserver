@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +20,13 @@ import com.sun.net.httpserver.*;
 public class PostHandler implements HttpHandler {
     private static List<Post> posts = new ArrayList<>();
     private Gson gson;
+    private Database db;
+    private PostDaoImplementation postDaoImpl;
 
-    public PostHandler() {
+    public PostHandler(Database db) {
         this.gson = new Gson();
-        
+        this.db = db;
+        this.postDaoImpl = new PostDaoImplementation(db);
     }
 
     @Override
@@ -46,20 +50,25 @@ public class PostHandler implements HttpHandler {
 
     private void handleGet(HttpExchange exchange) throws IOException {
         String query = exchange.getRequestURI().getQuery();
+        Post foundPost;
 
         Map<String, String> params = parseQuery(query);
 
         if (params.containsKey("id")) {
             int idParam = Integer.parseInt(params.get("id"));
 
-            Post foundPost = null;
+            try {
+                foundPost = postDaoImpl.get(idParam);
+
+            } catch (SQLException e) {
+                sendResponse(exchange, 400, "{\"error\": \"Database access error\"}");
+                return;
+            }
 
             if (foundPost != null) {
-                // Success: Return just the found object
                 String json = gson.toJson(foundPost);
                 sendResponse(exchange, 200, json);
             } else {
-                // Fail: ID doesn't exist
                 sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");
             }
         } else {
