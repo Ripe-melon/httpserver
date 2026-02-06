@@ -15,7 +15,6 @@ public interface PostDAOInterface {
 
     int insert(Post post) throws SQLException;
 
-    int delete(Post post);
+    int delete(int id);
 
 }
- 

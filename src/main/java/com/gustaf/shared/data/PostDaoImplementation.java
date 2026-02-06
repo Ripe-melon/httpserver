@@ -111,15 +111,15 @@ public class PostDaoImplementation implements PostDAOInterface {
     }
 
     @Override
-    public int delete(Post post) {
+    public int delete(int id) {
         int result = 0;
         try (Connection conn = db.getConnection()) {
 
-            String sql = "DELETE FROM posts WHERE post WHERE id = ?";
+            String sql = "DELETE FROM posts WHERE id = ?";
 
             PreparedStatement ps = conn.prepareStatement(sql);
 
-            ps.setInt(1, post.getId());
+            ps.setInt(1, id);
 
             result = ps.executeUpdate();
 

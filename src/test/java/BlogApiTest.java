@@ -82,7 +82,7 @@ class BlogApiTest {
     void testInsertPost() throws Exception {
         System.out.println("Test 3: Insert (Post) to DB");
 
-        Post insertPost = new Post("DB Insert title", "Inser Body Content");
+        Post insertPost = new Post("DB Insert title", "Insert Body Content");
 
         client.createPost(insertPost);
 
@@ -94,6 +94,25 @@ class BlogApiTest {
         assertEquals("DB Insert title", client.getPost(insertPost.getId()).getTitle(),
                 "Titles should match database data");
 
+    }
+
+    @Test
+    @Order(4)
+    void testDeletePost() throws Exception {
+        System.out.println("Test 4: Delete (Post) from DB");
+
+        Post setUpPost = new Post("DB Post To Delete", "This is the body of the post to delete");
+
+        client.createPost(setUpPost);
+
+        System.out.println("Inserted post:" + setUpPost.getId());
+
+        boolean deleted = client.deletePost(setUpPost.getId());
+
+        assertTrue(deleted, "Should return true!");
+        assertThrows(RuntimeException.class, () -> {
+            client.getPost(setUpPost.getId());
+        });
     }
 }
 

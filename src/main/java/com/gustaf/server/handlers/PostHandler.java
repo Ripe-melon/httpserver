@@ -121,9 +121,10 @@ public class PostHandler implements HttpHandler {
             return;
         }
         // 2. Deletion
-        boolean removed = posts.removeIf(post -> post.getId() == idParam);
 
-        if (removed) {
+        int removed = postDaoImpl.delete(idParam);
+
+        if (removed == 1) {
             sendResponse(exchange, 204, null);
         } else {
             sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");
