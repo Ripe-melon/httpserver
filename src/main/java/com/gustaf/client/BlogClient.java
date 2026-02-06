@@ -2,6 +2,7 @@ package com.gustaf.client;
 
 import java.net.http.*;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.gustaf.shared.exceptions.*;
 import com.gustaf.shared.models.Post;
 
@@ -39,9 +40,25 @@ public class BlogClient {
                 .header("Content-Type", "application/json").POST(BodyPublishers.ofString(postJson)).build();
         try {
             HttpResponse<String> response = httpClient.send(request, BodyHandlers.ofString());
+            if (ensureSuccess(response)) {
+                // 3. Extract the ID from the response text
+                JsonObject jsonObject = gson.fromJson(response.body(), JsonObject.class);
 
+                // 3. Extract the ID safely
+                if (jsonObject.has("id")) {
+                    int newId = jsonObject.get("id").getAsInt();
+
+                    // 4. Update your local object!
+                    post.setId(newId);
+
+                    return true;
+                }
+
+            }
             return ensureSuccess(response);
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException |
+
+                InterruptedException e) {
             throw new BlogApiException("Network failed: " + e.getMessage(), 0);
         }
     }

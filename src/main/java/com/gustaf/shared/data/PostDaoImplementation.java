@@ -97,6 +97,8 @@ public class PostDaoImplementation implements PostDAOInterface {
                 try (ResultSet rs = ps.executeQuery()) {
                     rs.next();
                     result = rs.getInt("id");
+
+                    post.setId(result);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

@@ -4,6 +4,8 @@ import com.gustaf.server.SimpleHttpServer;
 import com.gustaf.shared.data.Database;
 import com.gustaf.shared.data.PostDaoImplementation;
 import com.gustaf.shared.models.Post;
+
+import org.checkerframework.checker.units.qual.s;
 import org.junit.jupiter.api.*; // Import JUnit magic
 
 import java.io.IOException;
@@ -73,6 +75,25 @@ class BlogApiTest {
         assertNotNull(fetched, "Should return a Post object, not null");
         assertEquals("DB Title", fetched.getTitle(), "Titles should match database data");
         assertEquals(newId, fetched.getId(), "IDs should match");
+    }
+
+    @Test
+    @Order(3)
+    void testInsertPost() throws Exception {
+        System.out.println("Test 3: Insert (Post) to DB");
+
+        Post insertPost = new Post("DB Insert title", "Inser Body Content");
+
+        client.createPost(insertPost);
+
+        System.out.println("Inserted post:" + insertPost.getId());
+
+        System.out.println("Inserted post:" + insertPost.toString());
+        System.out.println("Fetched post:" + client.getPost(insertPost.getId()).toString());
+
+        assertEquals("DB Insert title", client.getPost(insertPost.getId()).getTitle(),
+                "Titles should match database data");
+
     }
 }
 

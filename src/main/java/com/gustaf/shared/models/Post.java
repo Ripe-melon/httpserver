@@ -7,7 +7,6 @@ public class Post {
     String body;
 
     public Post(String title, String body) {
-        this.id = 0; // 0 indicates "Not saved in DB yet"
         this.title = title;
         this.body = body;
     }

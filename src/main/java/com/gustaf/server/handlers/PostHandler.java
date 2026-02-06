@@ -90,9 +90,12 @@ public class PostHandler implements HttpHandler {
         // convert JSON string to Java object
         Post newPost = gson.fromJson(sb.toString(), Post.class);
 
-        // Assign ID
-        newPost.setId(posts.size() + 1);
-        posts.add(newPost);
+        // Add a new post to the database
+        try {
+            postDaoImpl.insert(newPost);
+        } catch (SQLException e) {
+            sendResponse(exchange, 400, "{\"error\": \"Database access error\"}");
+        }
 
         // Respond
         System.out.println("Created new post: " + newPost.getTitle());
