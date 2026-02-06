@@ -37,7 +37,7 @@ Run this command to compile the code and download required libraries (Gson, Post
 ### 2. Start the Server
 Make sure your Postgres database is running, then start the application.
 
-# Run the SimpleHttpServer class
+#### Run the SimpleHttpServer class
 `java -cp "target/classes:target/dependency/*" com.gustaf.SimpleHttpServer`
 
 
