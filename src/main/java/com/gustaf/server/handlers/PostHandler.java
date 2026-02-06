@@ -18,7 +18,6 @@ import com.gustaf.shared.data.*;
 import com.sun.net.httpserver.*;
 
 public class PostHandler implements HttpHandler {
-    private static List<Post> posts = new ArrayList<>();
     private Gson gson;
     private Database db;
     private PostDaoImplementation postDaoImpl;
@@ -72,8 +71,13 @@ public class PostHandler implements HttpHandler {
                 sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");
             }
         } else {
-            String json = gson.toJson(posts);
-            sendResponse(exchange, 200, json);
+            try {
+                List<Post> dbPosts = postDaoImpl.getAll();
+                String json = gson.toJson(dbPosts);
+                sendResponse(exchange, 200, json);
+            } catch (SQLException e) {
+                sendResponse(exchange, 500, "{\"error\": \"Database error\"}");
+            }
         }
 
     }
@@ -104,6 +108,7 @@ public class PostHandler implements HttpHandler {
     }
 
     private void handleDelete(HttpExchange exchange) throws IOException {
+        int removed = 0;
         String query = exchange.getRequestURI().getQuery();
         Map<String, String> params = parseQuery(query);
 
@@ -122,8 +127,12 @@ public class PostHandler implements HttpHandler {
         }
         // 2. Deletion
 
-        int removed = postDaoImpl.delete(idParam);
-
+        try {
+            removed = postDaoImpl.delete(idParam);
+        } catch (SQLException e) {
+            sendResponse(exchange, 400, "{\"error\": \"Database access error\"}");
+            return;
+        }
         if (removed == 1) {
             sendResponse(exchange, 204, null);
         } else {
@@ -132,6 +141,8 @@ public class PostHandler implements HttpHandler {
     }
 
     public void handlePut(HttpExchange exchange) throws IOException {
+        int found = 0;
+        int idParam;
         String query = exchange.getRequestURI().getQuery();
 
         Map<String, String> params = parseQuery(query);
@@ -139,7 +150,7 @@ public class PostHandler implements HttpHandler {
             sendResponse(exchange, 400, "{\"error\": \"Missing ID\"}");
             return;
         }
-        int idParam;
+
         try {
             idParam = Integer.parseInt(params.get("id"));
         } catch (NumberFormatException e) {
@@ -154,16 +165,12 @@ public class PostHandler implements HttpHandler {
             sb.append(line);
         }
         Post incomingPost = gson.fromJson(sb.toString(), Post.class);
-        boolean found = false;
-        for (int i = 0; i < posts.size(); i++) {
-            if (posts.get(i).getId() == idParam) {
-                incomingPost.setId(idParam);
-                posts.set(i, incomingPost);
-                found = true;
-                break;
-            }
+        try {
+            found = postDaoImpl.update(idParam, incomingPost);
+        } catch (SQLException e) {
+            sendResponse(exchange, 400, "{\"error\": \"Database access error\"}");
         }
-        if (found) {
+        if (found == 1) {
             sendResponse(exchange, 200, "{\"message\": \"Post updated\", \"id\": " + incomingPost.getId() + "}");
         } else {
             sendResponse(exchange, 404, "{\"error\": \"Post not found\"}");

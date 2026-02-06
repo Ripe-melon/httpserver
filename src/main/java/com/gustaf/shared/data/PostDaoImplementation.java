@@ -39,7 +39,7 @@ public class PostDaoImplementation implements PostDAOInterface {
 
     @Override
     public List<Post> getAll() throws SQLException {
-        List<Post> posts = new ArrayList();
+        List<Post> posts = new ArrayList<>();
         try (Connection conn = db.getConnection()) {
             String sql = "SELECT id, title, body FROM posts";
 
@@ -60,7 +60,7 @@ public class PostDaoImplementation implements PostDAOInterface {
     }
 
     @Override
-    public int update(Post post) throws SQLException {
+    public int update(int id, Post post) throws SQLException {
         int result = 0;
         try (Connection conn = db.getConnection()) {
             String sql = "UPDATE posts SET title = ?, body = ? WHERE id = ?";
@@ -69,7 +69,7 @@ public class PostDaoImplementation implements PostDAOInterface {
 
                 ps.setString(1, post.getTitle());
                 ps.setString(2, post.getBody());
-                ps.setInt(3, post.getId());
+                ps.setInt(3, id);
 
                 result = ps.executeUpdate();
             }
@@ -95,12 +95,11 @@ public class PostDaoImplementation implements PostDAOInterface {
                 ps.setString(2, post.getBody());
 
                 try (ResultSet rs = ps.executeQuery()) {
-                    rs.next();
-                    result = rs.getInt("id");
+                    if (rs.next()) {
+                        result = rs.getInt("id");
 
-                    post.setId(result);
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                        post.setId(result);
+                    }
                 }
 
                 conn.close();
@@ -111,7 +110,7 @@ public class PostDaoImplementation implements PostDAOInterface {
     }
 
     @Override
-    public int delete(int id) {
+    public int delete(int id) throws SQLException {
         int result = 0;
         try (Connection conn = db.getConnection()) {
 
@@ -122,9 +121,6 @@ public class PostDaoImplementation implements PostDAOInterface {
             ps.setInt(1, id);
 
             result = ps.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
         return result;

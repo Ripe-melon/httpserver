@@ -77,9 +77,9 @@ public class BlogClient {
         }
     }
 
-    public boolean updatePost(Post post) {
+    public boolean updatePost(int id, Post post) {
         String postJson = gson.toJson(post);
-        String endpoint = String.format("%s/api/posts?id=%d", baseUrl, post.getId());
+        String endpoint = String.format("%s/api/posts?id=%d", baseUrl, id);
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(endpoint))
                 .header("Content-Type", "application/json").PUT(BodyPublishers.ofString(postJson)).build();
         try {

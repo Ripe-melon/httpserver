@@ -9,12 +9,12 @@ public interface PostDAOInterface {
 
     List<Post> getAll() throws SQLException;
 
-    int update(Post post) throws SQLException;
+    int update(int id, Post post) throws SQLException;
 
     int save(Post post) throws SQLException;
 
     int insert(Post post) throws SQLException;
 
-    int delete(int id);
+    int delete(int id) throws SQLException;
 
 }

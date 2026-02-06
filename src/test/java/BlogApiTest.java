@@ -114,87 +114,34 @@ class BlogApiTest {
             client.getPost(setUpPost.getId());
         });
     }
+
+    @Test
+    @Order(5)
+    void testUpdatePost() throws Exception {
+        System.out.println("Test 5: Update (Post) in DB");
+
+        Post setUpPost = new Post("DB Post To Update", "This is the body of the post to update");
+
+        client.createPost(setUpPost);
+        System.out.println("Inserted post:" + setUpPost.getId());
+
+        Post updatePost = new Post("DB Post That Is Updated", "This is the body of the post that is updated");
+
+        boolean success = client.updatePost(setUpPost.getId(), updatePost);
+
+        // 3. Assert: Verify the method returned true
+        assertTrue(success, "Update should return true");
+
+        // Verify that the post actually updated changed
+        Post fetchedPost = client.getPost(setUpPost.getId());
+
+        // Check that the title is now "Updated Title" and NOT the old title
+        assertEquals("DB Post That Is Updated", fetchedPost.getTitle(), "Title should have been updated");
+        assertEquals("This is the body of the post that is updated", fetchedPost.getBody(),
+                "Body should have been updated");
+
+        // Optional: Ensure the ID didn't accidentally change
+        assertEquals(setUpPost.getId(), fetchedPost.getId(), "ID should remain the same");
+
+    }
 }
-
-// @Test
-// @Order(2)
-// void testGetPost() {
-// // Act
-// // We assume ID is 1 because it's the first post we created
-// Post fetched = client.getPost(1);
-
-// // Assert
-// assertNotNull(fetched, "Should return a Post object, not null");
-// assertEquals("JUnit Test", fetched.getTitle(), "Titles should match");
-// }
-
-// @Test
-// @Order(3)
-// void testUpdatePost() {
-// System.out.println("Test 3: Update (PUT)");
-
-// // 1. Arrange: Prepare the "New Box" with updated content
-// // Note: The ID here doesn't matter much if your server forces the ID from
-// the
-// // URL,
-// // but it's good practice to keep it consistent.
-// Post updatedData = new Post(1, "Updated Title", "This content was changed via
-// PUT!");
-
-// // 2. Act: Send the PUT request targeting ID 1
-// // (Assuming your method is named 'updatePost')
-// boolean success = client.updatePost(1, updatedData);
-
-// // 3. Assert: Verify the method returned true
-// assertTrue(success, "Update should return true");
-
-// // 4. Verification: Fetch the post again to prove the Server's memory
-// actually
-// // changed
-// Post fetchedPost = client.getPost(1);
-
-// // Check that the title is now "Updated Title" and NOT the old title
-// assertEquals("Updated Title", fetchedPost.getTitle(), "Title should have been
-// updated");
-// assertEquals("This content was changed via PUT!", fetchedPost.getBody(),
-// "Body should have been updated");
-
-// // Optional: Ensure the ID didn't accidentally change
-// assertEquals(1, fetchedPost.getId(), "ID should remain 1");
-// }
-
-// @Test
-// @Order(4)
-// void testDeletePost() {
-// // Act
-// boolean deleted = client.deletePost(1);
-
-// // Assert
-// assertTrue(deleted, "deletePost should return true");
-
-// // Extra Verification: Try to fetch it again, should fail!
-// // This is a "Negative Test" - we expect an error.
-// assertThrows(RuntimeException.class, () -> {
-// client.getPost(1);
-// });
-// }
-
-// @Test
-// @Order(5)
-// void testUniqueIds() {
-// // Arrange: Create two different post objects
-// Post post1 = new Post(0, "First", "Body");
-// Post post2 = new Post(0, "Second", "Body");
-
-// // Act: Send both
-// client.createPost(post1); // Server assigns ID 1
-// client.createPost(post2); // Server assigns ID 2
-
-// // Act 2: Fetch them back to check IDs
-// Post fetched1 = client.getPost(1);
-// Post fetched2 = client.getPost(2);
-
-// // Assert: Check that IDs are not the same
-// assertNotEquals(fetched1.getId(), fetched2.getId());
-// }
-// }

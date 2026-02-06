@@ -140,14 +140,14 @@ class DatabaseTest {
 
         // 2. Act
         // FIX: Use the constructor that sets the ID to 1
-        Post postToUpdate = new Post(1, "Updated Title", "Updated Body");
+        Post postToUpdate = new Post(original.getId(), "Updated Title", "Updated Body");
 
         // Now it sends: UPDATE ... WHERE id = 1;
-        int rowsAffected = postDaoImplementation.update(postToUpdate);
+        int rowsAffected = postDaoImplementation.update(original.getId(), postToUpdate);
 
         // 3. Assert
         // Verify the update actually happened!
-        assertEquals(1, rowsAffected, "Update should affect exactly 1 row");
+        assertEquals(original.getId(), rowsAffected, "Update should affect exactly 1 row");
 
         Post updatedResult = postDaoImplementation.get(1);
         assertEquals("Updated Title", updatedResult.getTitle());
